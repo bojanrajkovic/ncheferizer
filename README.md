@@ -10,3 +10,5 @@ Make everyone sound like the Swedish Chef.
 > Console.WriteLine ("Hello, world!".Encheferize ());
 Hellu, vurld!
 ```
+
+A port of https://github.com/alexdean/cheferize/.

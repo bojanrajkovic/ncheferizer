@@ -7,6 +7,6 @@ Make everyone sound like the Swedish Chef.
 ```csharp
 > using NCheferizer;
 
-> Console.WriteLine ("Hello, world!");
+> Console.WriteLine ("Hello, world!".Encheferize ());
 Hellu, vurld!
 ```

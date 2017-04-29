@@ -4,4 +4,20 @@
     <TargetFramework>netstandard1.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageId>NCheferizer</PackageId>
+    <Authors>Bojan Rajkovic</Authors>
+    <Title>NCheferizer</Title>
+    <Description>Encheferizer.NET Enterprise Edition: make anyone sound like the Swedish Chef.</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>$(ReleaseNotes)</PackageReleaseNotes>
+    <PackageProjectUrl>https://coderinserepeat.com/projects/#ncheferizer</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.github.com/bojanrajkovic/NCheferizer/master/LICENSE.md</PackageLicenseUrl>
+    <PackageTags></PackageTags>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+  </PropertyGroup>
+
 </Project>

@@ -7,9 +7,12 @@ namespace NCheferizer
 {
     delegate RuleResult Rule(string subject, Position pos, Context context);
 
+    // ReSharper disable once ClassNeverInstantiated.Global
     class Encheferizer
     {
+        // ReSharper disable once InconsistentNaming
         static readonly Lazy<Encheferizer> instance = new Lazy<Encheferizer>();
+
         public static Encheferizer Instance => instance.Value;
 
         readonly Random r = new Random();
@@ -22,7 +25,7 @@ namespace NCheferizer
             DefineRule(
                 "Pass the Bork",
                 (subject, position, context) => {
-                    if (position == Position.First && subject.Length >= 4 && subject.Substring(0,4).ToLower() == "bork")
+                    if (position == Position.First && subject.Length >= 4 && subject.Substring(0, 4).ToLower() == "bork")
                         return new RuleResult(subject, 4);
                     return null;
                 }
@@ -87,28 +90,25 @@ namespace NCheferizer
             DefineRule(
                 "Interior ir becomes ur, or first-occurring interior i becomes ee",
                 (subject, position, context) => {
-                    if (position != Position.First) {
-                        if (subject.Length >= 2 && subject.Substring(0, 2) == "ir")
-                            return new RuleResult("ur", 2);
-                        else if (subject[0] == 'i' && !context.ChefSawAnI) {
-                            context.ChefSawAnI = true;
-                            return new RuleResult("ee", 1);
-                        }
-                    }
-                    return null;
+                    if (position == Position.First)
+                        return null;
+                    if (subject.Length >= 2 && subject.Substring(0, 2) == "ir")
+                        return new RuleResult("ur", 2);
+                    if (subject[0] != 'i' || context.ChefSawAnI)
+                        return null;
+                    context.ChefSawAnI = true;
+                    return new RuleResult("ee", 1);
                 }
             );
 
             DefineRule(
                 "ow becomes oo, or o becomes u",
                 (subject, position, context) => {
-                    if (position != Position.First) {
-                        if (subject.Length >= 2 && subject.Substring(0, 2) == "ow")
-                            return new RuleResult("oo", 2);
-                        else if (subject[0] == 'o')
-                            return new RuleResult("u", 1);
-                    }
-                    return null;
+                    if (position == Position.First)
+                        return null;
+                    if (subject.Length >= 2 && subject.Substring(0, 2) == "ow")
+                        return new RuleResult("oo", 2);
+                    return subject[0] == 'o' ? new RuleResult("u", 1) : null;
                 }
             );
 
@@ -197,9 +197,7 @@ namespace NCheferizer
             DefineRule(
                 "W becomes V",
                 (subject, position, context) => {
-                    if (char.ToLower(subject[0]) == 'w')
-                        return new RuleResult(ChangeCase('v', subject[0]), 1);
-                    return null;
+                    return char.ToLower(subject[0]) == 'w' ? new RuleResult(ChangeCase('v', subject[0]), 1) : null;
                 }
             );
 
@@ -209,7 +207,7 @@ namespace NCheferizer
             );
         }
 
-        string ChangeCase(char @char, char input)
+        static string ChangeCase(char @char, char input)
             => new string(char.IsUpper(input) ? char.ToUpper(@char) : @char, 1);
 
         void DefineRule(string name, Rule rule)
@@ -235,19 +233,21 @@ namespace NCheferizer
             };
 
             while (inPos < word.Length) {
-                var position = (inPos == 0) ? Position.First : (
-                    inPos == (word.Length - 1) ? Position.Last : Position.Internal
+                var position = inPos == 0 ? Position.First : (
+                    inPos == word.Length - 1 ? Position.Last : Position.Internal
                 );
 
                 var subject = word.Substring(inPos);
 
                 foreach (var ruleH in rules) {
                     var result = ruleH.Rule(subject, position, context);
-                    if (result != null) {
-                        output.Append(result.Result);
-                        inPos += result.Consumed;
-                        break;
-                    }
+
+                    if (result == null)
+                        continue;
+
+                    output.Append(result.Result);
+                    inPos += result.Consumed;
+                    break;
                 }
             }
 

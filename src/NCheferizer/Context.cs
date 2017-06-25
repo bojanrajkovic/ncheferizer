@@ -3,6 +3,6 @@
     class Context
     {
         public bool ChefSawAnI { get; set; }
-        public bool ShouldBork { get; internal set; }
+        public bool ShouldBork { get; set; }
     }
 }

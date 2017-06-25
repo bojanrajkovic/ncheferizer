@@ -1,4 +1,6 @@
-﻿namespace NCheferizer
+﻿// ReSharper disable UnusedMember.Global
+
+namespace NCheferizer
 {
     public static class StringExtensions
     {

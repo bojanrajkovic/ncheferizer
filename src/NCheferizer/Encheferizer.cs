@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using JetBrains.Annotations;
+
 namespace NCheferizer
 {
     delegate RuleResult Rule(string subject, Position pos, Context context);
 
-    // ReSharper disable once ClassNeverInstantiated.Global
-    class Encheferizer
+    [PublicAPI]
+    public class Encheferizer
     {
         // ReSharper disable once InconsistentNaming
         static readonly Lazy<Encheferizer> instance = new Lazy<Encheferizer>();
@@ -187,18 +189,12 @@ namespace NCheferizer
 
             DefineRule(
                 "V becomes F",
-                (subject, position, context) => {
-                    if (char.ToLower(subject[0]) == 'v')
-                        return new RuleResult(ChangeCase('f', subject[0]), 1);
-                    return null;
-                }
+                (subject, position, context) => char.ToLower(subject[0]) == 'v' ? new RuleResult(ChangeCase('f', subject[0]), 1) : null
             );
 
             DefineRule(
                 "W becomes V",
-                (subject, position, context) => {
-                    return char.ToLower(subject[0]) == 'w' ? new RuleResult(ChangeCase('v', subject[0]), 1) : null;
-                }
+                (subject, position, context) => char.ToLower(subject[0]) == 'w' ? new RuleResult(ChangeCase('v', subject[0]), 1) : null
             );
 
             DefineRule(
@@ -218,10 +214,11 @@ namespace NCheferizer
         /// </summary>
         /// <param name="input">The input text.</param>
         /// <param name="shouldBork">Should I bork?</param>
+        /// <param name="skipRules">An array of predicates to determine if words should be skipped.</param>
         /// <returns>An encheferized string.</returns>
         /// <remarks>This method is thread-safe.</remarks>
-        public string Encheferize(string input, bool shouldBork = true)
-            => string.Join(" ", input.Split(' ').Select(w => EncheferizeWord(w, shouldBork)));
+        public string Encheferize(string input, bool shouldBork = true, params Func<string, bool>[] skipRules)
+            => string.Join(" ", input.Split(' ').Select(w => skipRules.Any(sr => sr(w)) ? w : EncheferizeWord(w, shouldBork)));
 
         string EncheferizeWord(string word, bool shouldBork)
         {

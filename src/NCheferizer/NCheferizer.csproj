@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <PackageReference Include="GitInfo" Version="1.1.63" PrivateAssets="All" />
+    <PackageReference Include="JetBrains.Annotations" Version="10.4.0" PrivateAssets="All" />
   </ItemGroup>
 
   <Target Name="SetVersion" DependsOnTargets="GitInfo" BeforeTargets="CoreCompile;GetAssemblyVersion;GenerateNuspec;_GenerateRestoreProjectSpec;EnsureWixToolsetInstalled" Condition="$(GitInfoImported) == 'True'">

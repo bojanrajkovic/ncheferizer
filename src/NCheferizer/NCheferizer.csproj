@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
+    <GitInfoReportImportance>high</GitInfoReportImportance>
+    <GitSkipCache>true</GitSkipCache>
+    <GitVersionFile>NCheferizer.version</GitVersionFile>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -18,6 +21,22 @@
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <RepositoryUrl>https://github.com/bojanrajkovic/ncheferizer</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="GitInfo" Version="1.1.63" PrivateAssets="All" />
+  </ItemGroup>
+
+  <Target Name="SetVersion" DependsOnTargets="GitInfo" BeforeTargets="CoreCompile;GetAssemblyVersion;GenerateNuspec;_GenerateRestoreProjectSpec;EnsureWixToolsetInstalled" Condition="$(GitInfoImported) == 'True'">
+    <PropertyGroup>
+      <VersionPrefix>$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)</VersionPrefix>
+      <VersionSuffix Condition="'$(GitBranch)' == 'master'">$(GitSemVerDashLabel)</VersionSuffix>
+      <VersionSuffix Condition="'$(GitBranch)' != 'master'">$(GitSemVerDashLabel)-$(GitBranch)-$(GitCommit)</VersionSuffix>
+      <PackageVersion Condition="'$(GitBranch)' == 'master'">$(VersionPrefix)$(VersionSuffix)</PackageVersion>
+      <PackageVersion Condition="'$(GitBranch)' != 'master'">$(VersionPrefix)$(VersionSuffix)</PackageVersion>
+    </PropertyGroup>
+    <Message Importance="high" Text="##teamcity[buildNumber '$(PackageVersion)']" Condition="'$(TEAMCITY_VERSION)' != ''" />
+  </Target>
 </Project>
